@@ -8,9 +8,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  text: {
+  title: {
     fontFamily: 'RedRose Bold',
-    fontSize: 30
+    fontSize: 45,
+    color: Colors.WHITE
+  },
+  description: {
+    fontFamily: 'Montserrat Bold',
+    color: Colors.WHITE,
+    marginVertical: 50
+  },
+  about: {
+    fontFamily: 'Montserrat Bold',
+    textDecorationLine: 'underline',
+    color: Colors.WHITE,
+    fontSize: 24,
+    marginTop: 60
+  },
+  buttonContainer: {
+    width: '70%'
   }
 })
 
