@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 
-import Router from './src/routes'
-import Home from './src/pages/Home'
+import Router from './src/Router'
 
 class App extends Component {
   render() { 
     return (
-      <Home />
+      <Router />
     )}
 }
 

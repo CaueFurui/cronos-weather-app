@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat Bold'
   },
   button: {
-    borderRadius: 30,
+    borderRadius: 45,
     backgroundColor: Colors.CRONOS_YELLOW
   }
 })

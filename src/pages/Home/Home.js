@@ -4,10 +4,15 @@ import styles from './styles'
 import {
   CRONOS_LOGO as LOGO
 } from '../../assets/images'
+import PropTypes from 'prop-types'
 import Button from '../../components/Button'
 import * as DATA from './Home.json'
 
-export default class Home extends Component {
+class Home extends Component {
+  constructor(props){
+    super(props)
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -15,10 +20,10 @@ export default class Home extends Component {
         <Text style={styles.title}>{DATA.title}</Text>
         <Text style={styles.description}>{DATA.description}</Text>
         <View style={styles.buttonContainer}>
-          <Button title='Entrar' onPress={() => console.log('click')}></Button>
+          <Button title='Entrar' onPress={() => this.props.navigation.navigate('About')}></Button>
         </View>
 
-        <TouchableOpacity onPress={() => console.log('Click')}>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('About')}>
           <Text style={styles.about}>
             Sobre o autor
           </Text>
@@ -27,3 +32,9 @@ export default class Home extends Component {
     )
   }
 }
+
+Home.propTypes = {
+  navigation: PropTypes.object.isRequired
+}
+
+export default Home
