@@ -1,18 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { Component } from 'react'
 import Geolocation from 'react-native-geolocation-service'
 import { View, PermissionsAndroid } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 import PropTypes from 'prop-types'
-import api from '../../services/api'
 import styles from './styles'
+import Button from '../../components/Button'
 
-const appId = '715e411eaaa0b8aeaf9015e0171e81eb'
+class Maps extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      hasLocationPermission: false,
+      userPosition: {
+        latitude: 0,
+        longitude: 0
+      }
+    }
+  }
 
-const Maps = ({ navigation }) => {
-  const [hasLocationPermission, setHasLocationPermission] = useState(false)
-  const [userPosition, setUserPosition] = useState(false)
+  componentDidMount () {
+    this.verifyLocationPermission()
+  }
 
-  async function verifyLocationPermission () {
+  async verifyLocationPermission () {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
@@ -20,23 +30,38 @@ const Maps = ({ navigation }) => {
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('Permissão garantida')
-        setHasLocationPermission(true)
+        this.setState({ hasLocationPermission: true })
       } else {
         console.error('Permissão negada')
-        setHasLocationPermission(false)
+        this.setState({ hasLocationPermission: false })
       }
     } catch (err) {
       console.warn(err)
     }
   }
 
-  const renderMarker = () => {
-    if (userPosition) {
+  renderMarker () {
+    if (this.state.hasLocationPermission) {
+      Geolocation.getCurrentPosition(
+        position => {
+          this.setState({
+            userPosition: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            }
+          })
+        },
+        error => {
+          console.error(error.code, error.message)
+        }
+      )
+    }
+    if (this.state.userPosition) {
       return (
         <Marker
           coordinate={{
-            latitude: userPosition.latitude,
-            longitude: userPosition.longitude
+            latitude: this.state.userPosition.latitude,
+            longitude: this.state.userPosition.longitude
           }}
           title='Você esta aqui'
         />
@@ -44,41 +69,33 @@ const Maps = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    verifyLocationPermission()
-
-    if (hasLocationPermission) {
-      Geolocation.getCurrentPosition(
-        position => {
-          setUserPosition({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          })
-          api.get(`weather?lat=${userPosition.latitude}&lon=${userPosition.longitude}&appid=${appId}`)
-        },
-        error => {
-          console.error(error.code, error.message)
-        }
-      )
-    }
-  }, [hasLocationPermission])
-
-  return (
-    <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        loadingEnabled={true}
-        initialRegion={{
-          latitude: -22.3245715,
-          longitude: -50.3114746,
-          latitudeDelta: 10,
-          longitudeDelta: 10
-        }}
-      >
-        {renderMarker()}
-      </MapView>
-    </View>
-  )
+  render () {
+    return (
+      <View style={styles.container}>
+        <MapView
+          style={styles.map}
+          loadingEnabled={true}
+          initialRegion={{
+            latitude: -22.3245715,
+            longitude: -50.3114746,
+            latitudeDelta: 10,
+            longitudeDelta: 10
+          }}
+        >
+          {this.renderMarker()}
+        </MapView>
+        <View style={ styles.buttonContainer }>
+          <Button
+            title='Ver previsão para seu local'
+            onPress={() => this.props.navigation.navigate('Wheater', {
+              lat: this.state.userPosition.latitude,
+              long: this.state.userPosition.longitude
+            })}
+            />
+        </View>
+      </View>
+    )
+  }
 }
 
 Maps.propTypes = {
