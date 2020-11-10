@@ -1,14 +1,16 @@
 module.exports = {
   env: {
-    es2020: true,
-    jest: true
+    es2021: true
   },
   extends: [
     'plugin:react/recommended',
     'standard'
   ],
   parserOptions: {
-    ecmaVersion: 11,
+    ecmaFeatures: {
+      jsx: true
+    },
+    ecmaVersion: 12,
     sourceType: 'module'
   },
   plugins: [
